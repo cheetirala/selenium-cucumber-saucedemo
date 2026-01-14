@@ -17,10 +17,10 @@ public class InventoryPage {
     private final WebDriverWait wait;
 
     @FindBy(className = "inventory_item")
-    private List<WebElement> inventoryItems;
+    private List<WebElement> inventoryProducts;
 
     @FindBy(className = "shopping_cart_badge")
-    private WebElement cartBadge;
+    private WebElement basketBadge;
 
     public InventoryPage(WebDriver driver) {
         this.driver = driver;
@@ -28,32 +28,36 @@ public class InventoryPage {
         PageFactory.initElements(driver, this);
     }
 
-    public void addHighestPriceItem() {
+    public void addHighestPriceProduct() {
 
         double highestPrice = 0.0;
-        WebElement highestItem = null;
+        WebElement highestProduct = null;
 
-        for (WebElement item : inventoryItems) {
-            WebElement priceElement = item.findElement(By.className("inventory_item_price"));
-            double itemPrice = Double.parseDouble(
+        for (WebElement product : inventoryProducts) {
+            WebElement priceElement = product.findElement(By.className("inventory_item_price"));
+            double productPrice = Double.parseDouble(
                     priceElement.getText().replace("$", "").trim()
             );
 
-            if (itemPrice > highestPrice) {
-                highestPrice = itemPrice;
-                highestItem = item;
+            if (productPrice > highestPrice) {
+                highestPrice = productPrice;
+                highestProduct = product;
             }
         }
 
-        if (highestItem != null) {
-            WebElement addCartToButton = highestItem.findElement(By.tagName("button"));
-            wait.until(ExpectedConditions.elementToBeClickable(addCartToButton));
-            addCartToButton.click();
+        if (highestProduct != null) {
+            WebElement addToCartButton = highestProduct.findElement(By.tagName("button"));
+            wait.until(ExpectedConditions.elementToBeClickable(addToCartButton)).click();
         }
     }
 
-    public int getCartItemCount() {
-        String count = wait.until(ExpectedConditions.visibilityOf(cartBadge)).getText();
+    public int getBasketProductCount() {
+        String count = wait.until(ExpectedConditions.visibilityOf(basketBadge)).getText();
         return Integer.parseInt(count);
+    }
+
+    public boolean isRemoveButtonDisplayed() {
+        WebElement removeButton = driver.findElement(By.xpath("//button[text()='Remove']"));
+        return wait.until(ExpectedConditions.visibilityOf(removeButton)).isDisplayed();
     }
 }

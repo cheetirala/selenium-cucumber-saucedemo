@@ -24,8 +24,14 @@ public class LoginPage {
     }
 
     public void login(String user, String pass) {
+        username.click();
         username.sendKeys(user);
+        password.clear();
         password.sendKeys(pass);
         loginButton.click();
+    }
+
+    public boolean isLoginSuccessful(){
+        return driver.getCurrentUrl().contains("inventory");
     }
 }
